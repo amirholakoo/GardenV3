@@ -348,7 +348,7 @@ def main():
 #############################################################################################       
 # Run the main function every XX minutes
 while True:
-    
+    print(f"Now system is waking up...It's {now}")
     # Get the sensor data
     sensor_data = get_sensor_data()
     if sensor_data is None:
@@ -359,6 +359,7 @@ while True:
     else:
         # If there's enough sunlight, run the main function
         logging.info(f"Min. Light set at:  {MIN_LIGHT}")
+        logging.info(f"Current level:      {sensor_data['light_level']}")
         if sensor_data['light_level'] > MIN_LIGHT :  #                       # <<<<<<<<<<<<<<<<<<<===========
             logging.info(f"Enough Light to Take images...")
             logging.info(f"Current level:      {sensor_data['light_level']}")
@@ -367,6 +368,8 @@ while True:
                   
         else:
             logging.info(f"Due to lack of light, system is waiting...")
+            logging.info(f"Min. Light set at:  {MIN_LIGHT}")
+            logging.info(f"Current level:      {sensor_data['light_level']}")
             # Sleep for XX sec                                               # <<<<<<<<<<<<<<<<<<<===========
             rest = (long_sleep * 60)
             now = datetime.now().strftime("%H:%M:%S")
