@@ -121,17 +121,40 @@ def get_sensor_data():
             return data
         
     except requests.exceptions.HTTPError as err:
-        logging.error(f"HTTP error occurred: {err}")
+        logging.info(f"HTTP error occurred: {err}")
+        print(f"HTTP error occurred: {err}")
+        logging.info(f"System waits and try again after 60s...")
+        print(f"System waits and try again after 60s...")
+        time.sleep(60)                                                    # <<<<<<<<<<<<<<<<<<<===========
+        
+        return None
         
     except Exception as err:
-        logging.error(f"Other error occurred: {err}")
+        logging.info(f"Other error occurred: {err}")
+        print(f"Other error occurred: {err}")
+        logging.info(f"System waits and try again after 60s...")
+        print(f"System waits and try again after 60s...")
+        time.sleep(60)                                                    # <<<<<<<<<<<<<<<<<<<===========
+        
+        return None
         
     except ConnectionError:
-        logging.error(f"Failed to connect to {ip_address}. Please check the connection.")
+        logging.info(f"Failed to connect to {ip_address}. Please check the connection.")
+        print(f"Failed to connect to {ip_address}. Please check the connection.")
+        logging.info(f"System waits and try again after 60s...")
+        print(f"System waits and try again after 60s...")
+        time.sleep(60)                                                    # <<<<<<<<<<<<<<<<<<<===========
+        
+        return None
         
         # Wait for a while before trying again
-        time.sleep(60)
-        return get_sensor_data()
+        logging.info(f"HTTP error occurred: {err}")
+        print(f"HTTP error occurred: {err}")
+        logging.info(f"System waits and try again after 60s...")
+        print(f"System waits and try again after 60s...")
+        time.sleep(60)                                                    # <<<<<<<<<<<<<<<<<<<===========
+        
+        return None
 
 # Define a function to update the data on the ESP32
 def update_data(dry_count, moist_count, germination_count, wet_soil_ratio, germination_avg):
@@ -350,12 +373,15 @@ def main():
 #############################################################################################       
 # Run the main function every XX minutes
 while True:
+    now = datetime.now().strftime("%H:%M:%S")
     print(f"Now system is waking up...It's {now}")
     # Get the sensor data
     sensor_data = get_sensor_data()
     if sensor_data is None:
         logging.info(f"ERORR: sensor data is EMPTY!")
-        logging.error(f"Failed to get sensor data. Skipping this iteration.")
+        logging.info(f"Failed to get sensor data. Skipping this iteration.")
+        print(f"ERORR: sensor data is EMPTY!")
+        print(f"Failed to get sensor data. Skipping this iteration.")
         continue
         
     else:
