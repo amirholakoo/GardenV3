@@ -339,15 +339,15 @@ def main():
         if sensor_data['light_level'] < SUNNY and num_dry_pixels > MIN_DRY: #and wet_soil_ratio < WETDRY :      
             start_watering_time = control_pump('on', pump_number)
             logging.info(f"Start watering_time {start_watering_time}  <===============")
-            #print(f"Start watering_time {start_watering_time} <===============")
+            print(f"Start watering_time {start_watering_time} <===============")
             logging.info(f"Turning on the pump {pump_number}...")
             
             time.sleep(watering_cycle * 60)  # Keep the pump on for XX seconds          # <<<<<<<<<<<<<<<<<<<===========
             stop_watering_time = control_pump('off', pump_number)
             logging.info(f"STOP watering_time  {stop_watering_time}  <===============")
-            #print(f"STOP watering_time  {stop_watering_time}  <===============")
+            print(f"STOP watering_time  {stop_watering_time}  <===============")
             logging.info(f"Turning off the pump...")
-            #print(f"Turning off the pump {pump_number}...")
+            print(f"Turning off the pump {pump_number}...")
         else:
             logging.info(f"Skip watering because either too sunny or too wet... ")
             
