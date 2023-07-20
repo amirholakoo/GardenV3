@@ -129,7 +129,9 @@ def get_sensor_data():
     except ConnectionError:
         logging.error(f"Failed to connect to {ip_address}. Please check the connection.")
         
-        return None
+        # Wait for a while before trying again
+        time.sleep(60)
+        return get_sensor_data()
 
 # Define a function to update the data on the ESP32
 def update_data(dry_count, moist_count, germination_count, wet_soil_ratio, germination_avg):
