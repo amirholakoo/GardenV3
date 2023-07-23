@@ -165,14 +165,19 @@ def update_data(dry_count, moist_count, germination_count, wet_soil_ratio, germi
         'wet_soil_ratio': wet_soil_ratio,
         'germination_avg': germination_avg
     }
-    response = requests.post(f"http://{ESP_IP}:{ESP_PORT}/update_data", json=data)
-    if response.status_code == 200:
-        logging.info(f"Update successful, response: {response.json()}")
-    else:
-        logging.info(f"Update failed, response code: {response.status_code}")
+    try:
+        response = requests.post(f"http://{ESP_IP}:{ESP_PORT}/update_data", json=data)
+        if response.status_code == 200:
+            logging.info(f"Update successful, response: {response.json()}")
+        else:
+            logging.info(f"Update failed, response code: {response.status_code}")
+    except Exception as e:
+        logging.error(f"Error occurred while updating data: {e}")
+        logging.info(f"Error occurred while updating data: {e}")
+
     
 # Define a function to control the pump
-def control_pump(state, pump_number):
+def control_pumpv1(state, pump_number):
     response = requests.get(f"http://{ESP_IP}:{ESP_PORT}/control_pump?state={state}&pump={pump_number}")
     if response.status_code == 200:
         watering_time = datetime.now() # Capture the time the pump was activated
@@ -180,6 +185,22 @@ def control_pump(state, pump_number):
         logging.info(f"Pump {pump_number} control successful, response: {response.text}")
     else:
         logging.info(f"Pump control {pump_number} failed, response code: {response.status_code}")
+    return watering_time
+
+def control_pump(state, pump_number):
+    watering_time = None
+    try:
+        response = requests.get(f"http://{ESP_IP}:{ESP_PORT}/control_pump?state={state}&pump={pump_number}")
+        if response.status_code == 200:
+            watering_time = datetime.now() # Capture the time the pump was activated
+            watering_time = datetime.now().strftime("%H:%M:%S")
+            logging.info(f"Pump {pump_number} control successful, response: {response.text}")
+        else:
+            logging.info(f"Pump control {pump_number} failed, response code: {response.status_code}")
+    except Exception as e:
+        logging.error(f"Error occurred while controlling pump: {e}")
+        logging.info(f"Error occurred while controlling pump: {e}")
+        
     return watering_time
 
 def save_data_to_csv(data, csv_path):
@@ -241,14 +262,7 @@ def main():
 
         # Transform the image perspective to focus on the garden
         raw_img = img
-        
-        # Show the original image, dry soil mask, wet soil mask, and sprout mask
-        #plt.figure(figsize=(40, 10))
-        #plt.subplot(141)
-        #plt.imshow(raw_img)
-        #plt.title('Original Image')
-        #plt.show()
-        
+
         logging.info(f"")
         logging.info(f"Cropping the image to ROI")
         img = Image.fromarray(transform_perspective(np.array(img), corners))
@@ -264,28 +278,7 @@ def main():
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         #save_detection_to_csv(timestamp, num_dry_pixels, num_wet_pixels, num_sprout_pixels, csv_path)
         
-        
-        # Show the original image, dry soil mask, wet soil mask, and sprout mask
-        #plt.figure(figsize=(40, 10))
 
-        #plt.subplot(141)
-        #plt.imshow(img)
-        #plt.title('CUT Image')
-
-        #plt.subplot(142)
-        #plt.imshow(mask_dry, cmap='YlOrBr')
-        #plt.title(f'Dry Soil Detection\n{num_dry_pixels} pixels')
-
-        #plt.subplot(143)
-        #plt.imshow(mask_wet, cmap='YlOrBr')
-        #plt.title(f'Wet Soil Detection\n{num_wet_pixels} pixels')
-
-        #plt.subplot(144)
-        #plt.imshow(mask_sprouts, cmap='Greens')
-        #plt.title(f'Sprout Detection\n{num_sprout_pixels} pixels')
-
-        #plt.show()
-        
         #######################################################################
         logging.info(f"")
         logging.info(f"..............................")
