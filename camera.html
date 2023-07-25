@@ -34,11 +34,16 @@
 
         <!-- Display the graphs -->
         {% for filename in filenames %}
+        
         <img src="/static/{{filename}}" alt="{{filename}}">
         {% endfor %}
         
-        <h2>Log Information</h2>
+        <h2>Camera Log</h2>
         <pre>{{ log_info }}</pre>
+        
+        <h2>General 24H Log</h2>
+        <pre>{{ gen_log }}</pre>
+        
         
     </div>
 </body>
